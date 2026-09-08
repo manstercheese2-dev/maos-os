@@ -201,6 +201,11 @@
         <div class="file-icon">📁</div>
         <div>Games</div>
     </div>
+        
+    <div class="file" onclick="openCase()">
+    <div class="file-icon">FILE</div>
+    <div>CASE_017</div>
+</div>
 
 </div>
 
@@ -249,6 +254,9 @@
     function closeFiles() {
         document.getElementById("files-window").style.display = "none";
     }
+        function openCase() {
+    window.open("murder-case.html", "_blank");
+}
         function openSecret() {
     document.getElementById("secret-window").style.display = "block";
 }
