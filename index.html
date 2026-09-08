@@ -95,6 +95,24 @@
     padding: 20px;
 }
 
+        .file {
+    display: inline-block;
+    width: 100px;
+    text-align: center;
+    margin: 10px;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.file:hover {
+    background: #eeeeee;
+}
+
+.file-icon {
+    font-size: 40px;
+}
+        
 </style>
 </head>
 
@@ -117,8 +135,28 @@
         <button onclick="closeFiles()">✕</button>
     </div>
     <div class="window-content">
-        <p>Welcome to your files!</p>
+
+    <div class="file">
+        <div class="file-icon">📄</div>
+        <div>secrets.txt</div>
     </div>
+
+    <div class="file">
+        <div class="file-icon">📄</div>
+        <div>README.txt</div>
+    </div>
+
+    <div class="file">
+        <div class="file-icon">🖼️</div>
+        <div>maomao.png</div>
+    </div>
+
+    <div class="file">
+        <div class="file-icon">📁</div>
+        <div>Games</div>
+    </div>
+
+</div>
 
 </div>
 
