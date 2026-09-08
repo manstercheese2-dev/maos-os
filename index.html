@@ -1,11 +1,67 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Mao's OS</title>
+
+    <style>
+        body {
+            margin: 0;
+            background: #9bd8d8;
+            font-family: Arial, sans-serif;
+        }
+
+        .desktop {
+            height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .icon {
+            width: 80px;
+            text-align: center;
+            color: white;
+        }
+
+        .icon-image {
+            font-size: 45px;
+        }
+
+        .taskbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 50px;
+            background: #222;
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+            box-sizing: border-box;
+        }
+
+        .start-button {
+            color: white;
+            font-size: 20px;
+        }
+    </style>
 </head>
 
 <body>
-    <h1>Welcome to Mao's OS 🐟</h1>
-    <p>System successfully booted.</p>
+
+    <div class="desktop">
+
+        <div class="icon">
+            <div class="icon-image">📁</div>
+            <div>Files</div>
+        </div>
+
+    </div>
+
+    <div class="taskbar">
+        <div class="start-button">🐟 Mao</div>
+    </div>
+
 </body>
+
 </html>
