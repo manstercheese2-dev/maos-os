@@ -1,0 +1,2047 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>CASE 017 — Restricted Archive</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    min-height: 100%;
+    background: #080808;
+    color: #d8d8d8;
+    font-family: "Courier New", monospace;
+}
+
+body {
+    background:
+        repeating-linear-gradient(
+            0deg,
+            rgba(255,255,255,0.018) 0px,
+            rgba(255,255,255,0.018) 1px,
+            transparent 1px,
+            transparent 4px
+        ),
+        #080808;
+}
+
+/* =========================
+   TOP BAR
+========================= */
+
+.topbar {
+    height: 58px;
+    border-bottom: 1px solid #333;
+    background: #0d0d0d;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    position: sticky;
+    top: 0;
+    z-index: 20;
+}
+
+.top-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.archive-label {
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: #777;
+}
+
+.case-number {
+    font-size: 14px;
+    letter-spacing: 2px;
+}
+
+.status {
+    border: 1px solid #555;
+    padding: 5px 9px;
+    font-size: 8px;
+    letter-spacing: 2px;
+}
+
+/* =========================
+   LAYOUT
+========================= */
+
+.app {
+    display: flex;
+    min-height: calc(100vh - 58px);
+}
+
+.sidebar {
+    width: 285px;
+    flex-shrink: 0;
+    background: #0c0c0c;
+    border-right: 1px solid #333;
+    padding: 20px 14px;
+    overflow-y: auto;
+}
+
+.sidebar-heading {
+    color: #666;
+    font-size: 8px;
+    letter-spacing: 3px;
+    margin: 5px 7px 15px;
+}
+
+.file-button {
+    width: 100%;
+    border: 0;
+    background: transparent;
+    color: #999;
+    text-align: left;
+    padding: 10px 8px;
+    margin-bottom: 2px;
+    font-family: inherit;
+    cursor: pointer;
+    font-size: 10px;
+    letter-spacing: 1px;
+    transition: 0.15s;
+}
+
+.file-button:hover {
+    background: #191919;
+    color: #eee;
+}
+
+.file-button.active {
+    background: #ddd;
+    color: #080808;
+}
+
+.file-button.locked {
+    color: #444;
+}
+
+.sidebar-separator {
+    height: 1px;
+    background: #292929;
+    margin: 16px 5px;
+}
+
+.main {
+    flex: 1;
+    padding: 35px;
+    overflow-y: auto;
+}
+
+/* =========================
+   DOCUMENT
+========================= */
+
+.document {
+    width: min(900px, 100%);
+    min-height: 760px;
+    margin: 0 auto;
+    background:
+        repeating-linear-gradient(
+            0deg,
+            rgba(0,0,0,0.015) 0px,
+            rgba(0,0,0,0.015) 1px,
+            transparent 1px,
+            transparent 5px
+        ),
+        #e8e8e8;
+    color: #151515;
+    padding: 55px 65px;
+    box-shadow: 0 0 50px rgba(0,0,0,0.7);
+    position: relative;
+}
+
+.document:before {
+    content: "";
+    position: absolute;
+    inset: 12px;
+    border: 1px solid #bbb;
+    pointer-events: none;
+}
+
+.document-header {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 3px solid #171717;
+    padding-bottom: 16px;
+    margin-bottom: 30px;
+}
+
+.department {
+    font-size: 8px;
+    letter-spacing: 3px;
+}
+
+.document h1 {
+    font-size: 27px;
+    letter-spacing: 3px;
+    margin: 6px 0 0;
+}
+
+.classification {
+    text-align: right;
+    font-size: 8px;
+    letter-spacing: 2px;
+    line-height: 1.8;
+}
+
+.document p {
+    font-family: Georgia, serif;
+    font-size: 16px;
+    line-height: 1.8;
+}
+
+.document hr {
+    border: 0;
+    border-top: 1px solid #999;
+    margin: 28px 0;
+}
+
+/* =========================
+   COVER
+========================= */
+
+.cover {
+    text-align: center;
+    min-height: 650px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.cover-small {
+    font-size: 9px;
+    letter-spacing: 4px;
+    color: #555;
+}
+
+.cover h1 {
+    font-size: 64px;
+    font-weight: normal;
+    letter-spacing: 10px;
+    margin: 25px 0;
+}
+
+.cover-title {
+    font-size: 19px;
+    letter-spacing: 4px;
+    margin-bottom: 50px;
+}
+
+.cover-line {
+    width: 70%;
+    height: 1px;
+    background: #333;
+    margin: 0 auto 35px;
+}
+
+.cover-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-left: 1px solid #888;
+    border-top: 1px solid #888;
+    margin: 0 auto;
+    width: 80%;
+}
+
+.cover-info div {
+    border-right: 1px solid #888;
+    border-bottom: 1px solid #888;
+    padding: 15px;
+}
+
+.cover-info span {
+    display: block;
+    font-size: 8px;
+    color: #777;
+    letter-spacing: 2px;
+    margin-bottom: 7px;
+}
+
+.cover-info strong {
+    font-size: 11px;
+    letter-spacing: 1px;
+}
+
+.stamp {
+    margin: 40px auto 0;
+    border: 4px solid #222;
+    padding: 10px 20px;
+    display: inline-block;
+    transform: rotate(-4deg);
+    font-size: 20px;
+    letter-spacing: 4px;
+}
+
+/* =========================
+   BOXES
+========================= */
+
+.important {
+    border: 2px solid #222;
+    padding: 18px;
+    margin: 25px 0;
+    font-family: "Courier New", monospace;
+    font-size: 12px;
+    letter-spacing: 1px;
+}
+
+.margin-note {
+    border-left: 2px solid #444;
+    padding: 15px 18px;
+    margin: 30px 0;
+    font-family: "Comic Sans MS", cursive;
+    font-style: italic;
+    transform: rotate(-1deg);
+}
+
+.typewriter {
+    font-family: "Courier New", monospace !important;
+    font-size: 13px !important;
+    line-height: 2 !important;
+}
+
+/* =========================
+   SUSPECTS
+========================= */
+
+.suspect {
+    border-bottom: 1px solid #999;
+    padding: 24px 0;
+}
+
+.suspect:last-child {
+    border-bottom: 0;
+}
+
+.suspect-name {
+    font-size: 20px;
+    letter-spacing: 2px;
+    margin-bottom: 5px;
+}
+
+.suspect-meta {
+    color: #666;
+    font-size: 9px;
+    letter-spacing: 1px;
+}
+
+.suspect p {
+    font-size: 14px;
+    margin: 10px 0;
+}
+
+/* =========================
+   TIMELINE
+========================= */
+
+.timeline {
+    border-left: 2px solid #333;
+    margin-left: 40px;
+}
+
+.timeline-row {
+    display: grid;
+    grid-template-columns: 70px 20px 1fr;
+    min-height: 55px;
+    align-items: center;
+}
+
+.timeline-time {
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.timeline-dot {
+    width: 9px;
+    height: 9px;
+    background: #222;
+    border-radius: 50%;
+    margin-left: -5px;
+}
+
+.timeline-event {
+    padding-left: 15px;
+    font-family: Georgia, serif;
+    font-size: 14px;
+}
+
+/* =========================
+   PHOTOGRAPHS
+========================= */
+
+.photo-frame {
+    background: #ccc;
+    border: 1px solid #222;
+    padding: 8px;
+    margin: 25px 0;
+}
+
+.photo-frame svg {
+    display: block;
+    width: 100%;
+    filter: grayscale(1) contrast(1.15);
+}
+
+.photo-label {
+    font-size: 9px;
+    letter-spacing: 2px;
+    line-height: 1.8;
+    margin-top: 10px;
+}
+
+/* =========================
+   REDACTIONS
+========================= */
+
+.redaction {
+    display: inline-block;
+    background: #111;
+    height: 16px;
+    vertical-align: middle;
+    margin: 0 3px;
+}
+
+.redacted-page {
+    font-family: "Courier New", monospace;
+    font-size: 13px;
+    line-height: 2.3;
+}
+
+.redacted-page p {
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+}
+
+.redacted-quote {
+    border-left: 4px solid #222;
+    padding: 18px;
+    margin: 30px 0;
+    font-family: Georgia, serif;
+    font-size: 18px;
+    line-height: 2;
+    font-style: italic;
+}
+
+/* =========================
+   TABLE
+========================= */
+
+.records {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 10px;
+}
+
+.records th,
+.records td {
+    border: 1px solid #666;
+    padding: 11px 8px;
+    text-align: left;
+}
+
+.records th {
+    background: #ccc;
+    letter-spacing: 1px;
+}
+
+/* =========================
+   NOTES
+========================= */
+
+textarea {
+    width: 100%;
+    min-height: 380px;
+    resize: vertical;
+    border: 1px solid #777;
+    background:
+        repeating-linear-gradient(
+            transparent,
+            transparent 30px,
+            #aaa 31px
+        ),
+        #eee;
+    color: #111;
+    font-family: "Comic Sans MS", cursive;
+    font-size: 16px;
+    line-height: 31px;
+    padding: 10px;
+}
+
+.answer-box {
+    min-height: 300px;
+    background: #ededed;
+}
+
+button.action {
+    background: #111;
+    color: #eee;
+    border: 1px solid #777;
+    padding: 12px 22px;
+    margin-top: 15px;
+    font-family: inherit;
+    letter-spacing: 2px;
+    cursor: pointer;
+}
+
+button.action:hover {
+    background: #eee;
+    color: #111;
+}
+
+.sealed {
+    margin-top: 25px;
+    padding: 18px;
+    border: 2px solid #222;
+    font-size: 10px;
+    letter-spacing: 2px;
+    line-height: 2;
+}
+
+/* =========================
+   EVIDENCE TAG
+========================= */
+
+.evidence-tag {
+    display: inline-block;
+    border: 1px solid #555;
+    padding: 5px 8px;
+    font-size: 8px;
+    letter-spacing: 2px;
+    margin-bottom: 15px;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 800px) {
+
+    .sidebar {
+        width: 210px;
+    }
+
+    .main {
+        padding: 15px;
+    }
+
+    .document {
+        padding: 35px 25px;
+    }
+
+    .cover h1 {
+        font-size: 38px;
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="topbar">
+
+    <div class="top-left">
+
+        <div class="archive-label">
+            METROPOLITAN POLICE ARCHIVE
+        </div>
+
+        <div class="case-number">
+            CASE 017
+        </div>
+
+    </div>
+
+    <div class="status">
+        RESTRICTED ACCESS
+    </div>
+
+</div>
+
+
+<div class="app">
+
+
+<!-- =========================
+     SIDEBAR
+========================= -->
+
+<div class="sidebar">
+
+    <div class="sidebar-heading">
+        CASE DOCUMENTS
+    </div>
+
+    <button class="file-button active" onclick="openFile('cover', this)">
+        CASE_017
+    </button>
+
+    <button class="file-button" onclick="openFile('overview', this)">
+        01_CASE_OVERVIEW
+    </button>
+
+    <button class="file-button" onclick="openFile('victim', this)">
+        02_VICTIM_PROFILE
+    </button>
+
+    <button class="file-button" onclick="openFile('suspects', this)">
+        03_PERSONS_OF_INTEREST
+    </button>
+
+    <button class="file-button" onclick="openFile('timeline', this)">
+        04_TIMELINE
+    </button>
+
+    <div class="sidebar-separator"></div>
+
+    <div class="sidebar-heading">
+        WITNESS MATERIAL
+    </div>
+
+    <button class="file-button" onclick="openFile('statementA', this)">
+        05_STATEMENT_A
+    </button>
+
+    <button class="file-button" onclick="openFile('statementB', this)">
+        06_STATEMENT_B
+    </button>
+
+    <button class="file-button" onclick="openFile('statementC', this)">
+        07_STATEMENT_C
+    </button>
+
+    <div class="sidebar-separator"></div>
+
+    <div class="sidebar-heading">
+        PHYSICAL EVIDENCE
+    </div>
+
+    <button class="file-button" onclick="openFile('photo1', this)">
+        08_EVIDENCE_01
+    </button>
+
+    <button class="file-button" onclick="openFile('photo2', this)">
+        09_EVIDENCE_02
+    </button>
+
+    <button class="file-button" onclick="openFile('medical', this)">
+        10_MEDICAL_REPORT
+    </button>
+
+    <button class="file-button" onclick="openFile('letter', this)">
+        11_RECOVERED_LETTER
+    </button>
+
+    <button class="file-button" onclick="openFile('phone', this)">
+        12_PHONE_RECORD
+    </button>
+
+    <div class="sidebar-separator"></div>
+
+    <div class="sidebar-heading">
+        CLASSIFIED
+    </div>
+
+    <button class="file-button locked" onclick="unlockRedacted(this)">
+        13_REDACTED_DOCUMENT
+    </button>
+
+    <div class="sidebar-separator"></div>
+
+    <button class="file-button" onclick="openFile('notes', this)">
+        14_INVESTIGATOR_NOTES
+    </button>
+
+    <button class="file-button" onclick="openFile('answer', this)">
+        15_FINAL_CONCLUSION
+    </button>
+
+</div>
+
+
+<!-- =========================
+     MAIN
+========================= -->
+
+<div class="main">
+
+<div id="document-container"></div>
+
+</div>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   CASE CONTENT
+========================================================= */
+
+const documents = {
+
+cover: `
+<div class="document">
+
+    <div class="cover">
+
+        <div class="cover-small">
+            METROPOLITAN POLICE DEPARTMENT
+        </div>
+
+        <h1>CASE 017</h1>
+
+        <div class="cover-line"></div>
+
+        <div class="cover-title">
+            THE BLACKWOOD HOUSE INCIDENT
+        </div>
+
+        <div class="cover-info">
+
+            <div>
+                <span>VICTIM</span>
+                <strong>ADRIAN BLACKWOOD</strong>
+            </div>
+
+            <div>
+                <span>DATE</span>
+                <strong>17 OCTOBER 2019</strong>
+            </div>
+
+            <div>
+                <span>LOCATION</span>
+                <strong>BLACKWOOD HOUSE</strong>
+            </div>
+
+            <div>
+                <span>STATUS</span>
+                <strong>OPEN</strong>
+            </div>
+
+        </div>
+
+        <div class="stamp">
+            UNSOLVED
+        </div>
+
+    </div>
+
+</div>
+`,
+
+overview: `
+<div class="document">
+
+<div class="document-header">
+
+<div>
+<div class="department">
+METROPOLITAN POLICE DEPARTMENT
+</div>
+
+<h1>CASE OVERVIEW</h1>
+</div>
+
+<div class="classification">
+CASE 017<br>
+RESTRICTED
+</div>
+
+</div>
+
+
+<p>
+At approximately <b>23:41</b> on 17 October 2019,
+officers were called to Blackwood House following a
+report of an unconscious male.
+</p>
+
+<p>
+The victim was identified as <b>Adrian Blackwood</b>,
+aged 48.
+</p>
+
+<div class="important">
+
+<b>CAUSE OF DEATH</b><br>
+Severe cranial trauma.
+
+<br><br>
+
+<b>INITIAL ESTIMATED TIME OF DEATH</b><br>
+22:10 — 23:10
+
+</div>
+
+<p>
+No obvious signs of forced entry were discovered.
+The front door was locked when officers arrived.
+</p>
+
+<p>
+The victim's private study showed signs of disturbance.
+A locked drawer had been opened and several documents
+were missing.
+</p>
+
+<p>
+Four individuals were identified as persons of interest.
+</p>
+
+<div class="margin-note">
+Whoever did this knew the house.
+<br>
+They also knew exactly what they were looking for.
+</div>
+
+<div class="evidence-tag">
+INVESTIGATION NOTE / 18 OCTOBER 2019
+</div>
+
+<p>
+The initial timeline should not be considered definitive.
+</p>
+
+</div>
+`,
+
+victim: `
+<div class="document">
+
+<div class="document-header">
+
+<div>
+<div class="department">
+CASE 017
+</div>
+
+<h1>VICTIM PROFILE</h1>
+</div>
+
+<div class="classification">
+PERSONNEL<br>
+RESTRICTED
+</div>
+
+</div>
+
+<div style="display:grid;grid-template-columns:230px 1fr;gap:35px;">
+
+<div>
+
+<div class="photo-frame">
+
+<svg viewBox="0 0 250 300">
+
+<rect width="250" height="300" fill="#d2d2d2"/>
+
+<circle cx="125" cy="95" r="55" fill="#555"/>
+
+<path
+d="M62 280 C65 190 185 190 188 280"
+fill="#444"
+/>
+
+<rect x="78" y="72" width="94" height="12" fill="#222"/>
+
+<rect x="83" y="108" width="28" height="7" fill="#222"/>
+
+<rect x="139" y="108" width="28" height="7" fill="#222"/>
+
+<path
+d="M105 147 Q125 158 145 147"
+stroke="#111"
+stroke-width="5"
+fill="none"
+/>
+
+</svg>
+
+</div>
+
+<div style="font-size:9px;letter-spacing:2px;text-align:center;">
+BLACKWOOD, ADRIAN
+</div>
+
+</div>
+
+
+<div>
+
+<p>
+<b>AGE:</b> 48
+</p>
+
+<p>
+<b>OCCUPATION:</b> Architect / Property owner
+</p>
+
+<p>
+<b>MARITAL STATUS:</b> Divorced
+</p>
+
+<p>
+<b>KNOWN RESIDENCE:</b> Blackwood House
+</p>
+
+<hr>
+
+<p>
+Blackwood was described by colleagues as intelligent,
+private and highly controlling.
+</p>
+
+<p>
+During the weeks before his death he became increasingly
+concerned that information was being removed from his
+private study.
+</p>
+
+<div class="important">
+
+Blackwood kept a brass desk clock in his study.
+
+</div>
+
+<p>
+A handwritten note found inside his coat contained
+three words:
+</p>
+
+<div class="margin-note">
+CHECK THE CLOCK.
+</div>
+
+</div>
+
+</div>
+
+</div>
+`,
+
+suspects: `
+<div class="document">
+
+<div class="document-header">
+
+<div>
+<div class="department">
+CASE 017
+</div>
+
+<h1>PERSONS OF INTEREST</h1>
+</div>
+
+<div class="classification">
+POLICE USE<br>
+ONLY
+</div>
+
+</div>
+
+
+<div class="suspect">
+
+<div class="suspect-name">
+ELIAS VALE
+</div>
+
+<div class="suspect-meta">
+AGE 42 / ARCHITECT / BUSINESS PARTNER
+</div>
+
+<p>
+Worked with Blackwood for eleven years.
+Their professional relationship had deteriorated
+considerably during the previous six months.
+</p>
+
+<p>
+<b>ALIBI:</b>
+Claims he remained at home between 20:00 and 23:30.
+States that he did not leave the property.
+</p>
+
+<p>
+<b>MOTIVE:</b>
+Blackwood intended to dissolve their partnership.
+</p>
+
+</div>
+
+
+<div class="suspect">
+
+<div class="suspect-name">
+MARA BELL
+</div>
+
+<div class="suspect-meta">
+AGE 35 / RESTORATION SPECIALIST / FORMER PARTNER
+</div>
+
+<p>
+Former romantic partner of Blackwood.
+Relationship ended approximately three months
+before the incident.
+</p>
+
+<p>
+<b>ALIBI:</b>
+Claims she worked alone in her studio until shortly
+after midnight.
+</p>
+
+<p>
+<b>MOTIVE:</b>
+Financial dispute following the separation.
+</p>
+
+<p>
+<b>NOTE:</b>
+Possessed a key to Blackwood House.
+</p>
+
+</div>
+
+
+<div class="suspect">
+
+<div class="suspect-name">
+JONATHAN REED
+</div>
+
+<div class="suspect-meta">
+AGE 51 / PROPERTY DEVELOPER / CLIENT
+</div>
+
+<p>
+Was negotiating the purchase of Blackwood House.
+Negotiations collapsed two days before the death.
+</p>
+
+<p>
+<b>ALIBI:</b>
+Claims he was dining at the Ashford Hotel until
+approximately 22:15.
+</p>
+
+<p>
+<b>MOTIVE:</b>
+Blackwood refused to sell.
+</p>
+
+</div>
+
+
+<div class="suspect">
+
+<div class="suspect-name">
+NORA VALE
+</div>
+
+<div class="suspect-meta">
+AGE 27 / RESEARCHER / NIECE
+</div>
+
+<p>
+Blackwood's niece.
+Had been staying at the property while conducting
+research nearby.
+</p>
+
+<p>
+<b>ALIBI:</b>
+Claims she left at 19:40 and returned after 00:30.
+</p>
+
+<p>
+<b>MOTIVE:</b>
+Unknown.
+</p>
+
+<p>
+<b>NOTE:</b>
+Recently discovered something inside Blackwood's study.
+</p>
+
+</div>
+
+</div>
+`,
+
+timeline: `
+<div class="document">
+
+<div class="document-header">
+
+<div>
+<div class="department">
+CASE 017
+</div>
+
+<h1>ESTABLISHED TIMELINE</h1>
+</div>
+
+<div class="classification">
+TIMELINE<br>
+PRELIMINARY
+</div>
+
+</div>
+
+<div class="timeline">
+
+${[
+["18:32","Adrian Blackwood receives a private telephone call."],
+["19:40","Nora Vale reportedly leaves Blackwood House."],
+["20:05","Mara Bell claims she begins work at her studio."],
+["20:17","Jonathan Reed is seen entering the Ashford Hotel."],
+["20:50","A delivery is made to Blackwood House."],
+["21:10","Elias Vale claims he is already at home."],
+["21:48","Neighbour reports the study light is visible."],
+["22:07","Unknown number calls Blackwood's landline."],
+["22:19","Hotel records place Reed away from his table."],
+["22:31","Neighbour reports a loud impact."],
+["22:44","Study light appears to turn off."],
+["23:16","Nora Vale's phone reconnects to the local network."],
+["23:41","Police arrive at Blackwood House."]
+].map(x => `
+<div class="timeline-row">
+
+<div class="timeline-time">${x[0]}</div>
+
+<div class="timeline-dot"></div>
+
+<div class="timeline-event">
+${x[1]}
+</div>
+
+</div>
+`).join("")}
+
+</div>
+
+<div class="margin-note">
+Several times were obtained from witness recollection
+and should be compared against physical evidence.
+</div>
+
+</div>
+`,
+
+statementA: `
+<div class="document">
+
+<div class="document-header">
+
+<div>
+<div class="department">
+CASE 017 / WITNESS MATERIAL
+</div>
+
+<h1>STATEMENT A</h1>
+</div>
+
+<div class="classification">
+WITNESS<br>
+HARROW
+</div>
+
+</div>
+
+<h3>MRS. E. HARROW</h3>
+
+<p class="typewriter">
+I live across the road from Blackwood House.
+I know Mr. Blackwood by sight.
+</p>
+
+<p class="typewriter">
+On the night of the 17th I was awake because of
+the storm.
+</p>
+
+<p class="typewriter">
+At around half past ten I heard what sounded like
+furniture falling over.
+</p>
+
+<p class="typewriter">
+I looked through my upstairs window and could see
+the study window.
+The light was on.
+</p>
+
+<p class="typewriter">
+I did not see anyone leave.
+</p>
+
+<p class="typewriter">
+The curtains were open.
+That was unusual.
+</p>
+
+<div class="margin-note">
+The window was visible from the road.
+</div>
+
+<p class="typewriter">
+I remember the study clock was normally visible from
+the window because Mr. Blackwood kept it on the desk.
+</p>
+
+</div>
+`,
+
+statementB: `
+<div class="document">
+
+<div class="document-header">
+
+<div>
+<div class="department">
+CASE 017 / WITNESS MATERIAL
+</div>
+
+<h1>STATEMENT B</h1>
+</div>
+
+<div class="classification">
+WITNESS<br>
+KEANE
+</div>
+
+</div>
+
+<h3>THOMAS KEANE</h3>
+
+<p class="typewriter">
+I was employed by Mr. Blackwood for approximately
+four years.
+</p>
+
+<p class="typewriter">
+He kept a brass desk clock in his study.
+He was very particular about it.
+</p>
+
+<p class="typewriter">
+He wound it every evening at ten.
+</p>
+
+<p class="typewriter">
+The clock had stopped once before, during a power cut.
+He hated it when that happened.
+</p>
+
+<p class="typewriter">
+On the afternoon of the 17th he told me:
+</p>
+
+<div class="margin-note">
+"If anything happens, the clock will tell you."
+</div>
+
+<p class="typewriter">
+I assumed he meant the time.
+</p>
+
+</div>
+`,
+
+statementC: `
+<div class="document">
+
+<div class="document-header">
+
+<div>
+<div class="department">
+CASE 017 / WITNESS MATERIAL
+</div>
+
+<h1>STATEMENT C</h1>
+</div>
+
+<div class="classification">
+WITNESS<br>
+COLLINS
+</div>
+
+</div>
+
+<h3>J. COLLINS</h3>
+
+<p class="typewriter">
+I delivered a package to Blackwood House at
+approximately 20:50.
+</p>
+
+<p class="typewriter">
+The front door was opened by a woman.
+I did not see her clearly enough to identify her.
+</p>
+
+<p class="typewriter">
+She said Mr. Blackwood was upstairs.
+</p>
+
+<p class="typewriter">
+I remember she had something dark on her hands.
+At the time I assumed it was ink.
+</p>
+
+<p class="typewriter">
+The woman signed for the package using the name
+<span class="redaction" style="width:120px;"></span>
+</p>
+
+<div class="margin-note">
+Delivery record retained separately.
+</div>
+
+</div>
+`,
+
+photo1: `
+<div class="document">
+
+<div class="document-header">
+
+<div>
+<div class="department">
+PHYSICAL EVIDENCE
+</div>
+
+<h1>EVIDENCE 01</h1>
+</div>
+
+<div class="classification">
+PHOTOGRAPH<br>
+23:48
+</div>
+
+</div>
+
+<div class="photo-frame">
+
+<svg viewBox="0 0 700 430">
+
+<rect width="700" height="430" fill="#d4d4d4"/>
+
+<rect y="305" width="700" height="125" fill="#aaa"/>
+
+<rect x="65" y="45" width="235" height="260"
+fill="#eee" stroke="#333" stroke-width="5"/>
+
+<rect x="92" y="72" width="181" height="205"
+fill="#222"/>
+
+<line x1="182" y1="72" x2="182" y2="277"
+stroke="#777" stroke-width="4"/>
+
+<line x1="92" y1="175" x2="273" y2="175"
+stroke="#777" stroke-width="4"/>
+
+<rect x="385" y="255" width="180" height="18"
+fill="#444"/>
+
+<rect x="415" y="273" width="20" height="75"
+fill="#333"/>
+
+<rect x="520" y="273" width="20" height="75"
+fill="#333"/>
+
+<path
+d="M360 310 C390 270 450 275 480 312
+C450 340 395 340 360 310Z"
+fill="#444"
+/>
+
+<circle cx="420" cy="302" r="18" fill="#111"/>
+
+<rect x="485" y="275" width="55" height="8"
+fill="#111"/>
+
+</svg>
+
+<div class="photo-label">
+EVIDENCE 01 / PRIVATE STUDY / 23:48
+</div>
+
+</div>
+
+<p>
+The victim was discovered near the desk.
+No weapon was recovered in the immediate area.
+</p>
+
+<p>
+The study window was closed.
+</p>
+
+<p>
+The brass clock normally positioned on the desk
+was found on the floor.
+</p>
+
+</div>
+`,
+
+photo2: `
+<div class="document">
+
+<div class="document-header">
+
+<div>
+<div class="department">
+PHYSICAL EVIDENCE
+</div>
+
+<h1>EVIDENCE 02</h1>
+</div>
+
+<div class="classification">
+PHOTOGRAPH<br>
+00:16
+</div>
+
+</div>
+
+<div class="photo-frame">
+
+<svg viewBox="0 0 700 430">
+
+<rect width="700" height="430" fill="#ccc"/>
+
+<rect x="70" y="50" width="560" height="325"
+fill="#e7e7e7" stroke="#222" stroke-width="5"/>
+
+<rect x="115" y="90" width="470" height="230"
+fill="#f5f5f5" stroke="#777" stroke-width="2"/>
+
+<line x1="140" y1="125" x2="455" y2="125"
+stroke="#444" stroke-width="6"/>
+
+<line x1="140" y1="155" x2="520" y2="155"
+stroke="#777" stroke-width="4"/>
+
+<line x1="140" y1="185" x2="495" y2="185"
+stroke="#777" stroke-width="4"/>
+
+<line x1="140" y1="215" x2="510" y2="215"
+stroke="#777" stroke-width="4"/>
+
+<line x1="140" y1="245" x2="420" y2="245"
+stroke="#777" stroke-width="4"/>
+
+<rect x="360" y="98" width="170" height="95"
+fill="#bbb"/>
+
+<line x1="370" y1="108" x2="515" y2="180"
+stroke="#222" stroke-width="18"/>
+
+<line x1="515" y1="108" x2="370" y2="180"
+stroke="#222" stroke-width="18"/>
+
+</svg>
+
+<div class="photo-label">
+EVIDENCE 02 / DESK / 00:16
+</div>
+
+</div>
+
+<p>
+A section of paper appears to have been removed from
+beneath the desk blotter.
+</p>
+
+<div class="margin-note">
+"There is more than one copy."
+</div>
+
+</div>
+`,
+
+medical: `
+<div class="document">
+
+<div class="document-header">
+
+<div>
+<div class="department">
+FORENSIC PATHOLOGY
+</div>
+
+<h1>MEDICAL REPORT</h1>
+</div>
+
+<div class="classification">
+CASE 017<br>
+FINAL
+</div>
+
+</div>
+
+<p>
+<b>SUBJECT:</b> Adrian Blackwood
+</p>
+
+<p>
+<b>DATE OF EXAMINATION:</b> 18 October 2019
+</p>
+
+<hr>
+
+<p>
+One major impact injury was identified to the
+rear-left portion of the skull.
+</p>
+
+<p>
+The injury is consistent with a heavy blunt instrument.
+</p>
+
+<p>
+No significant defensive wounds were identified.
+</p>
+
+<p>
+No significant alcohol or sedative substances were
+present.
+</p>
+
+<div class="important">
+
+<b>ESTIMATED TIME OF DEATH</b>
+
+<br><br>
+
+22:25 — 22:50
+
+</div>
+
+<p>
+This estimate supersedes the initial field estimate.
+</p>
+
+<div class="margin-note">
+Someone wanted the first timeline to be wrong.
+</div>
+
+</div>
+`,
+
+letter: `
+<div class="document">
+
+<div class="document-header">
+
+<div>
+<div class="department">
+RECOVERED MATERIAL
+</div>
+
+<h1>LETTER</h1>
+</div>
+
+<div class="classification">
+DATED<br>
+12 OCT 2019
+</div>
+
+</div>
+
+<div style="max-width:600px;margin:auto;font-family:Georgia,serif;font-size:18px;line-height:2;">
+
+<div style="text-align:right;font-family:'Courier New';font-size:11px;">
+12 OCTOBER 2019
+</div>
+
+<p>
+Adrian,
+</p>
+
+<p>
+You told me the original was destroyed.
+</p>
+
+<p>
+I believed you.
+</p>
+
+<p>
+Then I found the second copy.
+</p>
+
+<p>
+If you keep going, you will leave me no choice.
+</p>
+
+<p>
+You know what happened in the old house.
+</p>
+
+<p>
+You know who was there.
+</p>
+
+<p>
+And you know what the clock means.
+</p>
+
+<p>
+Stop looking.
+</p>
+
+<p>
+— M
+</p>
+
+<div style="margin-top:35px;">
+<span class="redaction" style="width:310px;"></span>
+</div>
+
+</div>
+
+</div>
+`,
+
+phone: `
+<div class="document">
+
+<div class="document-header">
+
+<div>
+<div class="department">
+TELECOMMUNICATION RECORD
+</div>
+
+<h1>PHONE RECORD</h1>
+</div>
+
+<div class="classification">
+CASE 017<br>
+LANDLINE
+</div>
+
+</div>
+
+<table class="records">
+
+<thead>
+
+<tr>
+<th>TIME</th>
+<th>TYPE</th>
+<th>NUMBER</th>
+<th>DURATION</th>
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+<td>18:32</td>
+<td>INCOMING</td>
+<td>PRIVATE</td>
+<td>04:11</td>
+</tr>
+
+<tr>
+<td>20:03</td>
+<td>OUTGOING</td>
+<td>0141 88 91XX</td>
+<td>01:43</td>
+</tr>
+
+<tr>
+<td>21:56</td>
+<td>INCOMING</td>
+<td>PRIVATE</td>
+<td>00:19</td>
+</tr>
+
+<tr>
+<td>22:07</td>
+<td>INCOMING</td>
+<td>PRIVATE</td>
+<td>00:07</td>
+</tr>
+
+<tr>
+<td>22:08</td>
+<td>OUTGOING</td>
+<td>0141 88 91XX</td>
+<td>00:03</td>
+</tr>
+
+</tbody>
+
+</table>
+
+<div class="margin-note">
+Number 0141 88 91XX was disconnected approximately
+six months prior.
+</div>
+
+</div>
+`,
+
+notes: `
+<div class="document">
+
+<div class="document-header">
+
+<div>
+<div class="department">
+INVESTIGATION WORKSPACE
+</div>
+
+<h1>INVESTIGATOR NOTES</h1>
+</div>
+
+<div class="classification">
+PRIVATE
+</div>
+
+</div>
+
+<p>
+This page belongs to you.
+</p>
+
+<p>
+Write down suspects, contradictions, times,
+objects and anything that seems out of place.
+</p>
+
+<textarea
+id="investigator-notes"
+placeholder="Write your notes here..."
+></textarea>
+
+</div>
+`,
+
+answer: `
+<div class="document">
+
+<div class="document-header">
+
+<div>
+<div class="department">
+CASE 017
+</div>
+
+<h1>FINAL CONCLUSION</h1>
+</div>
+
+<div class="classification">
+SUBMISSION<br>
+SEALED
+</div>
+
+</div>
+
+<div class="important">
+
+DO NOT SUBMIT UNTIL YOU HAVE REVIEWED
+THE COMPLETE CASE FILE.
+
+</div>
+
+<p>
+Identify:
+</p>
+
+<ol>
+
+<li>Who killed Adrian Blackwood?</li>
+
+<li>How did the killer enter the house?</li>
+
+<li>What was the murder weapon?</li>
+
+<li>What was the motive?</li>
+
+<li>Which evidence proves your conclusion?</li>
+
+</ol>
+
+<br>
+
+<textarea
+id="final-answer"
+class="answer-box"
+placeholder="Write your complete theory here..."
+></textarea>
+
+<br>
+
+<button class="action" onclick="sealAnswer()">
+SEAL CONCLUSION
+</button>
+
+<div id="sealed-message"></div>
+
+</div>
+`
+
+};
+
+
+/* =========================================================
+   OPEN DOCUMENT
+========================================================= */
+
+function openFile(name, button) {
+
+    if (!documents[name]) {
+        return;
+    }
+
+    document.getElementById("document-container").innerHTML =
+        documents[name];
+
+    document.querySelectorAll(".file-button").forEach(btn => {
+        btn.classList.remove("active");
+    });
+
+    if (button) {
+        button.classList.add("active");
+    }
+
+    window.scrollTo(0,0);
+
+    restoreNotes();
+
+}
+
+
+/* =========================================================
+   NOTES
+========================================================= */
+
+function restoreNotes() {
+
+    const notesBox =
+        document.getElementById("investigator-notes");
+
+    if (notesBox) {
+
+        notesBox.value =
+            localStorage.getItem("case017_notes") || "";
+
+        notesBox.addEventListener("input", function() {
+
+            localStorage.setItem(
+                "case017_notes",
+                this.value
+            );
+
+        });
+
+    }
+
+}
+
+
+/* =========================================================
+   FINAL ANSWER
+========================================================= */
+
+function sealAnswer() {
+
+    const answer =
+        document.getElementById("final-answer");
+
+    const message =
+        document.getElementById("sealed-message");
+
+    if (!answer || !answer.value.trim()) {
+
+        message.innerHTML = `
+        <div class="sealed">
+        NO CONCLUSION ENTERED.
+        </div>
+        `;
+
+        return;
+    }
+
+    localStorage.setItem(
+        "case017_final_answer",
+        answer.value
+    );
+
+    message.innerHTML = `
+    <div class="sealed">
+
+    CONCLUSION SEALED.
+
+    <br><br>
+
+    YOUR THEORY HAS BEEN RECORDED.
+
+    <br><br>
+
+    CASE REVIEW PENDING.
+
+    </div>
+    `;
+
+}
+
+
+/* =========================================================
+   CLASSIFIED DOCUMENT
+========================================================= */
+
+function unlockRedacted(button) {
+
+    const code = prompt(
+        "ENTER AUTHORISED ACCESS CODE:"
+    );
+
+    /*
+       The access code is deliberately discoverable
+       through the evidence.
+    */
+
+    if (code === "2210") {
+
+        button.classList.remove("locked");
+
+        documents.redacted = `
+        <div class="document">
+
+        <div class="document-header">
+
+        <div>
+        <div class="department">
+        CLASSIFIED ARCHIVE
+        </div>
+
+        <h1>REDACTED DOCUMENT</h1>
+        </div>
+
+        <div class="classification">
+        ACCESS GRANTED
+        </div>
+
+        </div>
+
+        <div class="redacted-page">
+
+        <p>
+        SUBJECT:
+        BLACKWOOD / PROPERTY /
+        <span class="redaction" style="width:140px;"></span>
+        </p>
+
+        <p>
+        The original document concerns an incident
+        approximately eleven years prior to Case 017.
+        </p>
+
+        <p>
+        Several names have been removed.
+        </p>
+
+        <p>
+        <span class="redaction" style="width:350px;"></span>
+        </p>
+
+        <p>
+        <span class="redaction" style="width:240px;"></span>
+        </p>
+
+        <p>
+        The surviving section reads:
+        </p>
+
+        <div class="redacted-quote">
+
+        "There were three people in the room.
+        <br>
+        One of them lied.
+        <br>
+        One of them died.
+        <br>
+        The third kept the key."
+
+        </div>
+
+        <p>
+        <span class="redaction" style="width:390px;"></span>
+        </p>
+
+        <p>
+        <span class="redaction" style="width:310px;"></span>
+        </p>
+
+        <p>
+        <span class="redaction" style="width:280px;"></span>
+        </p>
+
+        <div style="
+        margin-top:60px;
+        border-top:2px solid #222;
+        padding-top:15px;
+        text-align:center;
+        font-size:9px;
+        letter-spacing:3px;
+        ">
+
+        DOCUMENT CONTINUES — PAGE 2 MISSING
+
+        </div>
+
+        </div>
+
+        </div>
+        `;
+
+        openFile("redacted", button);
+
+    } else {
+
+        alert("ACCESS DENIED.");
+
+    }
+
+}
+
+
+/* =========================================================
+   START
+========================================================= */
+
+openFile(
+    "cover",
+    document.querySelector(".file-button")
+);
+
+</script>
+
+</body>
+</html>
