@@ -73,20 +73,31 @@
 
     </div>
 
-    <div id="files-window">
-        <h2>📁 Files</h2>
+<div id="files-window">
+
+    <div class="window-bar">
+        <span>📁 Files</span>
+        <button onclick="closeFiles()">✕</button>
+    </div>
+    <div class="window-content">
         <p>Welcome to your files!</p>
     </div>
+
+</div>
 
     <div class="taskbar">
         <div class="start-button">🐟 Mao</div>
     </div>
 
-        <script>
-        function openFiles() {
-            document.getElementById("files-window").style.display = "block";
-        }
-    </script>
+    <script>
+    function openFiles() {
+        document.getElementById("files-window").style.display = "block";
+    }
+
+    function closeFiles() {
+        document.getElementById("files-window").style.display = "none";
+    }
+</script>
     
 </body>
 
