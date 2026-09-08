@@ -95,6 +95,18 @@
     padding: 20px;
 }
 
+        #secret-window {
+    display: none;
+    position: fixed;
+    top: 30%;
+    left: 30%;
+    width: 40%;
+    height: 30%;
+    background: white;
+    border: 3px solid #222;
+    border-radius: 10px;
+    box-sizing: border-box;
+}
         .file {
     display: inline-block;
     width: 100px;
@@ -136,7 +148,7 @@
     </div>
     <div class="window-content">
 
-    <div class="file">
+   <div class="file" onclick="openSecret()">
         <div class="file-icon">📄</div>
         <div>secrets.txt</div>
     </div>
@@ -158,6 +170,19 @@
 
 </div>
 
+    </div>
+
+<div id="secret-window">
+    <div class="window-bar">
+        <span>📄 secrets.txt</span>
+        <button onclick="closeSecret()">✕</button>
+    </div>
+
+    <div class="window-content">
+        <h2>🤫 SECRET FILE</h2>
+        <p>You found Mao's secret.</p>
+        <p>There is absolutely nothing suspicious here.</p>
+    </div>
 </div>
 
     <div class="taskbar">
@@ -172,6 +197,13 @@
     function closeFiles() {
         document.getElementById("files-window").style.display = "none";
     }
+        function openSecret() {
+    document.getElementById("secret-window").style.display = "block";
+}
+
+function closeSecret() {
+    document.getElementById("secret-window").style.display = "none";
+}
 </script>
     
 </body>
